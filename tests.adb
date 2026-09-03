@@ -167,7 +167,7 @@ begin
       Check ("8.2 Recursive rule underflow protected", Got_Err2);
 
       begin
-         if Parse (Act_Table, Goto_Tab, Grammar_Rules, [1 => ID_Tok, 2 => EOF_Symbol], 2) then null; end if;
+         if Parse (Act_Table, Goto_Tab, Grammar_Rules, [1 => EOF_Symbol], 2) then null; end if;
       exception when Parse_Error => Got_Err3 := True; end;
       Check ("8.3 Starting midway through invalid context underflows safely", Got_Err3);
    end;
