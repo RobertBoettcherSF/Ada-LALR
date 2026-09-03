@@ -101,7 +101,7 @@ begin
       Got_Err1, Got_Err2, Got_Err3 : Boolean := False;
    begin
       begin
-         Got_Err1 := Parse (Act_Table, Goto_Tab, Grammar_Rules, (1 => 9999, 2 => EOF_Symbol), 0);
+         if Parse (Act_Table, Goto_Tab, Grammar_Rules, (1 => 3, 2 => EOF_Symbol), 0) then null; end if;
       exception when Invalid_Table_Error => Got_Err1 := True; end;
       Check ("6.1 Unknown Token raises Invalid_Table_Error", Got_Err1);
 
@@ -109,15 +109,19 @@ begin
          Bad_Act : Action_Table := Act_Table;
       begin
          Bad_Act (2, 0) := (Kind => Action_Reduce, Rule => 999);
-         Got_Err2 := Parse (Bad_Act, Goto_Tab, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0);
-      exception when Invalid_Table_Error => Got_Err2 := True; end;
+         begin
+            if Parse (Bad_Act, Goto_Tab, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0) then null; end if;
+         exception when Invalid_Table_Error => Got_Err2 := True; end;
+      end;
       Check ("6.2 Out of bounds Rule ID raises Invalid_Table_Error", Got_Err2);
 
       declare
          Bad_Goto : constant Goto_Table (0 .. 4, 501 .. 501) := (others => (others => Invalid_State));
       begin
-         Got_Err3 := Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0);
-      exception when Invalid_Table_Error => Got_Err3 := True; end;
+         begin
+            if Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0) then null; end if;
+         exception when Invalid_Table_Error => Got_Err3 := True; end;
+      end;
       Check ("6.3 Out of bounds Goto target raises Invalid_Table_Error", Got_Err3);
    end;
 
@@ -130,12 +134,12 @@ begin
       Bad_Goto (0, 502) := Invalid_State;
       
       begin
-         Got_Err1 := Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0);
+         if Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0) then null; end if;
       exception when Parse_Error => Got_Err1 := True; end;
       Check ("7.1 Missing essential Goto raises Parse_Error", Got_Err1);
 
       begin
-         Got_Err2 := Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => PLUS_Tok, 3 => ID_Tok, 4 => EOF_Symbol), 0);
+         if Parse (Act_Table, Bad_Goto, Grammar_Rules, (1 => ID_Tok, 2 => PLUS_Tok, 3 => ID_Tok, 4 => EOF_Symbol), 0) then null; end if;
       exception when Parse_Error => Got_Err2 := True; end;
       Check ("7.2 Missing essential Goto during long parse fails safely", Got_Err2);
 
@@ -153,17 +157,17 @@ begin
       Got_Err1, Got_Err2, Got_Err3 : Boolean := False;
    begin
       begin
-         Got_Err1 := Parse (Act_Table, Goto_Tab, Bad_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0);
+         if Parse (Act_Table, Goto_Tab, Bad_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 0) then null; end if;
       exception when Parse_Error => Got_Err1 := True; end;
       Check ("8.1 Excess RHS size causes stack underflow exception", Got_Err1);
 
       begin
-         Got_Err2 := Parse (Act_Table, Goto_Tab, Bad_Rules, (1 => ID_Tok, 2 => PLUS_Tok, 3 => ID_Tok, 4 => EOF_Symbol), 0);
+         if Parse (Act_Table, Goto_Tab, Bad_Rules, (1 => ID_Tok, 2 => PLUS_Tok, 3 => ID_Tok, 4 => EOF_Symbol), 0) then null; end if;
       exception when Parse_Error => Got_Err2 := True; end;
       Check ("8.2 Recursive rule underflow protected", Got_Err2);
 
       begin
-         Got_Err3 := Parse (Act_Table, Goto_Tab, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 2);
+         if Parse (Act_Table, Goto_Tab, Grammar_Rules, (1 => ID_Tok, 2 => EOF_Symbol), 2) then null; end if;
       exception when Parse_Error => Got_Err3 := True; end;
       Check ("8.3 Starting midway through invalid context underflows safely", Got_Err3);
    end;
@@ -176,22 +180,28 @@ begin
       declare
          Empty_Toks : constant Token_Array (1 .. 0) := (others => EOF_Symbol);
       begin
-         Got_Err1 := Parse (Act_Table, Goto_Tab, Grammar_Rules, Empty_Toks, 0);
-      exception when Parse_Error => Got_Err1 := True; end;
+         begin
+            if Parse (Act_Table, Goto_Tab, Grammar_Rules, Empty_Toks, 0) then null; end if;
+         exception when Parse_Error => Got_Err1 := True; end;
+      end;
       Check ("9.1 Null token array raised Parse_Error properly", Got_Err1);
 
       declare
          No_EOF : constant Token_Array (1 .. 1) := (1 => ID_Tok);
       begin
-         Got_Err2 := Parse (Act_Table, Goto_Tab, Grammar_Rules, No_EOF, 0);
-      exception when Parse_Error => Got_Err2 := True; end;
+         begin
+            if Parse (Act_Table, Goto_Tab, Grammar_Rules, No_EOF, 0) then null; end if;
+         exception when Parse_Error => Got_Err2 := True; end;
+      end;
       Check ("9.2 Missing EOF trailing token raises Parse_Error", Got_Err2);
 
       declare
          No_EOF_Long : constant Token_Array (1 .. 3) := (1 => ID_Tok, 2 => PLUS_Tok, 3 => ID_Tok);
       begin
-         Got_Err3 := Parse (Act_Table, Goto_Tab, Grammar_Rules, No_EOF_Long, 0);
-      exception when Parse_Error => Got_Err3 := True; end;
+         begin
+            if Parse (Act_Table, Goto_Tab, Grammar_Rules, No_EOF_Long, 0) then null; end if;
+         exception when Parse_Error => Got_Err3 := True; end;
+      end;
       Check ("9.3 Long sequence without EOF raises Parse_Error", Got_Err3);
    end;
 
@@ -231,7 +241,7 @@ begin
       Toks (21) := ID_Tok;
       Toks (22) := ID_Tok; 
       begin
-         Got_Err := Parse (Act_Table, Goto_Tab, Grammar_Rules, Toks, 0);
+         if Parse (Act_Table, Goto_Tab, Grammar_Rules, Toks, 0) then null; end if;
       exception when Parse_Error => Got_Err := True; end;
       Check ("11.3 Invalid trailing characters without EOF triggers Error", Got_Err);
    end;
