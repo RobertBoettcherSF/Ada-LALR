@@ -11,7 +11,7 @@ package body LALR_Parser is
       --  Fixed-size stack for state tracking to avoid dynamic allocation overhead
       type State_Stack is array (1 .. 10_000) of State_ID;
       
-      Stack         : State_Stack := (others => 0);
+      Stack         : State_Stack := [others => 0];
       Top           : Natural := 0;
       Input_Idx     : Positive;
       Current_State : State_ID;
@@ -101,7 +101,7 @@ package body LALR_Parser is
    end Parse;
 
    function Generate_LALR_Mapping (LR1_States : LR1_State_Array) return LALR_Map is
-      Result          : LALR_Map (LR1_States'Range) := (others => 0);
+      Result          : LALR_Map (LR1_States'Range) := [others => 0];
       Next_LALR_State : State_ID := 0;
       Found           : Boolean;
    begin
